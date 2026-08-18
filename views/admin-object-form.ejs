@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= obj ? 'Modifier' : 'Nouvel' %> objet</title>
+  <link rel="stylesheet" href="/public/style.css" />
+</head>
+<body>
+  <main class="card">
+    <h1><%= obj ? '✏️ Modifier l\'objet' : '➕ Nouvel objet' %></h1>
+
+    <form method="POST" action="<%= obj ? `/admin/objects/${obj.id}/edit` : '/admin/objects/new' %>">
+      <label>
+        Titre (affiché sur la page publique)
+        <input type="text" name="title" value="<%= obj ? obj.title : '' %>" placeholder="Ex : Sac à dos noir" required />
+      </label>
+
+      <% if (!obj) { %>
+        <label>
+          Identifiant du lien (slug, laisser vide pour auto-génération)
+          <input type="text" name="slug" placeholder="Ex : sac-noir-arnaud" />
+        </label>
+      <% } %>
+
+      <label>
+        Message affiché au finder
+        <textarea name="message" rows="3" placeholder="Ex : Merci d'avoir trouvé mon sac ! Contacte-moi vite."><%= obj ? obj.message : '' %></textarea>
+      </label>
+
+      <label>
+        Tes coordonnées affichées sur la page (optionnel)
+        <textarea name="contact_info" rows="2" placeholder="Ex : Arnaud - 04xx xx xx xx - email@exemple.be"><%= obj ? obj.contact_info : '' %></textarea>
+      </label>
+
+      <% if (obj) { %>
+        <label class="checkbox">
+          <input type="checkbox" name="active" value="1" <%= obj.active ? 'checked' : '' %> />
+          Page active
+        </label>
+      <% } %>
+
+      <button type="submit">Enregistrer</button>
+    </form>
+
+    <% if (obj) { %>
+      <p><a href="/admin/objects/<%= obj.id %>/history">Voir l'historique de cet objet →</a></p>
+    <% } %>
+
+    <p><a href="/admin">← Retour à la liste</a></p>
+  </main>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Historique — <%= obj.title %></title>
+  <link rel="stylesheet" href="/public/style.css" />
+</head>
+<body>
+  <main class="card wide">
+    <h1>🕓 Historique — <%= obj.title %></h1>
+    <p><a href="<%= baseUrl %>/o/<%= obj.slug %>" target="_blank"><%= baseUrl %>/o/<%= obj.slug %></a></p>
+
+    <h2>Réponses du formulaire (<%= submissions.length %>)</h2>
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Nom</th><th>Contact</th><th>Message</th><th>Position</th></tr>
+      </thead>
+      <tbody>
+        <% submissions.forEach(s => { %>
+          <tr>
+            <td><%= s.created_at %></td>
+            <td><%= s.finder_name || '—' %></td>
+            <td><%= s.finder_contact || '—' %></td>
+            <td><%= s.finder_message || '—' %></td>
+            <td>
+              <% if (s.latitude && s.longitude) { %>
+                <a href="https://www.google.com/maps?q=<%= s.latitude %>,<%= s.longitude %>" target="_blank">Voir sur la carte</a>
+              <% } else { %>—<% } %>
+            </td>
+          </tr>
+        <% }) %>
+        <% if (submissions.length === 0) { %>
+          <tr><td colspan="5">Aucune réponse pour l'instant.</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+
+    <h2>Scans bruts (<%= scans.length %>)</h2>
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Position</th><th>Précision</th></tr>
+      </thead>
+      <tbody>
+        <% scans.forEach(s => { %>
+          <tr>
+            <td><%= s.created_at %></td>
+            <td>
+              <% if (s.latitude && s.longitude) { %>
+                <a href="https://www.google.com/maps?q=<%= s.latitude %>,<%= s.longitude %>" target="_blank">Voir sur la carte</a>
+              <% } else { %>non partagée<% } %>
+            </td>
+            <td><%= s.accuracy ? Math.round(s.accuracy) + ' m' : '—' %></td>
+          </tr>
+        <% }) %>
+        <% if (scans.length === 0) { %>
+          <tr><td colspan="3">Aucun scan pour l'instant.</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+
+    <p><a href="/admin">← Retour à la liste</a></p>
+  </main>
+</body>
+</html>

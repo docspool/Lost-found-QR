@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Mes objets</title>
+  <link rel="stylesheet" href="/public/style.css" />
+</head>
+<body>
+  <main class="card wide">
+    <div class="admin-header">
+      <h1>📋 Mes objets</h1>
+      <form method="POST" action="/admin/logout"><button class="link-btn" type="submit">Déconnexion</button></form>
+    </div>
+
+    <a class="btn" href="/admin/objects/new">+ Nouvel objet</a>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Lien / QR</th>
+          <th>Actif</th>
+          <th>Scans</th>
+          <th>Réponses</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% objects.forEach(o => { %>
+          <tr>
+            <td><%= o.title %></td>
+            <td><a href="<%= baseUrl %>/o/<%= o.slug %>" target="_blank"><%= baseUrl %>/o/<%= o.slug %></a></td>
+            <td><%= o.active ? '✅' : '⛔' %></td>
+            <td><a href="/admin/objects/<%= o.id %>/history"><%= o.scan_count %></a></td>
+            <td><a href="/admin/objects/<%= o.id %>/history"><%= o.submission_count %></a></td>
+            <td>
+              <a href="/admin/objects/<%= o.id %>/edit">Modifier</a>
+              ·
+              <form method="POST" action="/admin/objects/<%= o.id %>/delete" style="display:inline"
+                    onsubmit="return confirm('Supprimer cet objet et tout son historique ?');">
+                <button class="link-btn danger" type="submit">Supprimer</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+        <% if (objects.length === 0) { %>
+          <tr><td colspan="6">Aucun objet enregistré pour l'instant.</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>

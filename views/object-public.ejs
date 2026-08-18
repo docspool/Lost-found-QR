@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= obj.title %> — Objet trouvé ?</title>
+  <link rel="stylesheet" href="/public/style.css" />
+</head>
+<body>
+  <main class="card">
+    <h1>🎒 <%= obj.title %></h1>
+
+    <% if (obj.message) { %>
+      <p class="message"><%= obj.message %></p>
+    <% } %>
+
+    <% if (submitted) { %>
+      <div class="success">
+        <p>✅ Merci ! Le propriétaire a été prévenu et va te recontacter directement pour organiser la remise en main propre.</p>
+      </div>
+    <% } else { %>
+      <form id="finder-form" method="POST" action="/o/<%= obj.slug %>/submit">
+        <label>
+          Ton nom (optionnel)
+          <input type="text" name="finder_name" placeholder="Ton prénom" />
+        </label>
+        <label>
+          Ton téléphone ou email pour te recontacter
+          <input type="text" name="finder_contact" placeholder="06 12 34 56 78 ou email" />
+        </label>
+        <label>
+          Message (où tu l'as trouvé, où on peut se retrouver...)
+          <textarea name="finder_message" rows="3" placeholder="Ex : trouvé au parc, on peut se voir demain matin"></textarea>
+        </label>
+        <input type="hidden" name="latitude" id="latitude" />
+        <input type="hidden" name="longitude" id="longitude" />
+        <input type="hidden" name="accuracy" id="accuracy" />
+        <button type="submit">Envoyer</button>
+      </form>
+      <p class="geo-status" id="geo-status">📍 Localisation en cours...</p>
+    <% } %>
+
+    <% if (obj.contact_info) { %>
+      <div class="owner-contact">
+        <p>Tu peux aussi me contacter directement :</p>
+        <p class="contact"><%= obj.contact_info %></p>
+      </div>
+    <% } %>
+  </main>
+
+  <script>
+    const slug = <%- JSON.stringify(obj.slug) %>;
+    const statusEl = document.getElementById('geo-status');
+    const latField = document.getElementById('latitude');
+    const lngField = document.getElementById('longitude');
+    const accField = document.getElementById('accuracy');
+
+    function reportScan(position) {
+      const body = position
+        ? {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            accuracy: position.coords.accuracy
+          }
+        : {};
+      if (position) {
+        latField && (latField.value = position.coords.latitude);
+        lngField && (lngField.value = position.coords.longitude);
+        accField && (accField.value = position.coords.accuracy);
+        if (statusEl) statusEl.textContent = '📍 Position partagée, merci !';
+      } else if (statusEl) {
+        statusEl.textContent = '';
+      }
+      fetch(`/o/${slug}/scan`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      }).catch(() => {});
+    }
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => reportScan(pos),
+        () => reportScan(null),
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
+    } else {
+      reportScan(null);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connexion — Admin</title>
+  <link rel="stylesheet" href="/public/style.css" />
+</head>
+<body>
+  <main class="card">
+    <h1>🔐 Administration</h1>
+    <% if (error) { %>
+      <p class="error"><%= error %></p>
+    <% } %>
+    <form method="POST" action="/admin/login">
+      <label>
+        Mot de passe
+        <input type="password" name="password" autofocus required />
+      </label>
+      <button type="submit">Se connecter</button>
+    </form>
+  </main>
+</body>
+</html>
