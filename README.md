@@ -29,22 +29,19 @@ docker inspect qr-lost-found --format='{{json .NetworkSettings.Networks}}'
 
 Crée un Proxy Host dans l'UI de NPM :
 
-- **Domain Names** : `lost.mttnvds.be`
+- **Domain Names** : `<ton-domaine>`
 - **Forward Hostname/IP** : `qr-lost-found` (le nom du conteneur, résolu via le réseau Docker partagé)
 - **Forward Port** : `3000`
 - **Scheme** : `http`
 - Onglet **SSL** : "Request a new SSL Certificate" (Let's Encrypt) + Force SSL
 
-Le fichier `nginx/lost.mttnvds.be.conf` reste utile comme référence si un jour tu migres
-vers un nginx en ligne de commande (sites-available/sites-enabled + certbot) plutôt que NPM.
-
-Assure-toi que le sous-domaine `lost.mttnvds.be` pointe bien vers ton IP publique (DNS +
+Assure-toi que le sous-domaine `<ton-domaine>` pointe bien vers ton IP publique (DNS +
 redirection des ports 80/443 sur ta box vers le serveur qui fait tourner NPM).
 
 ## Notifications (ntfy)
 
 - Le plus simple : utiliser **ntfy.sh** gratuitement. Choisis un nom de topic difficile à
-  deviner (ex. `qrlf-a8f3k2z9`), mets-le dans `NTFY_TOPIC`, puis abonne-toi à ce topic
+  deviner, mets-le dans `NTFY_TOPIC`, puis abonne-toi à ce topic
   depuis l'app ntfy (Android/iOS) ou via le site web.
 - Si tu préfères, tu peux self-héberger ntfy sur ton VPS (même pattern Traefik que les
   autres services) et pointer `NTFY_URL` dessus.
