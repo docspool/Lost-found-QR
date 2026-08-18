@@ -1,0 +1,14 @@
+services:
+  qr-lost-found:
+    build: .
+    container_name: qr-lost-found
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./data:/app/data
+    networks:
+      - nginx_default
+
+networks:
+  nginx_default:
+    external: true
