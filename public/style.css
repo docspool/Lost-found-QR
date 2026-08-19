@@ -95,6 +95,8 @@ button:hover, .btn:hover { background: var(--accent-hover); }
 
 .geo-status { font-size: 0.85rem; color: var(--muted); text-align: center; }
 
+.privacy-note { font-size: 0.8rem; color: var(--muted); line-height: 1.4; margin-top: 8px; }
+
 .owner-contact {
   margin-top: 24px;
   padding-top: 16px;
