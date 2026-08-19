@@ -51,7 +51,9 @@ redirection des ports 80/443 sur ta box vers le serveur qui fait tourner NPM).
 1. Va sur `https://<ton-domaine>/admin`, connecte-toi.
 2. "+ Nouvel objet" → renseigne un titre, un message affiché au finder, et éventuellement
    tes coordonnées.
-3. La page publique de l'objet est disponible à `https://<ton-domaine>/o/<slug>`.
+3. La page publique de l'objet est disponible à `https://<ton-domaine>/o/<slug>`, avec un
+   slug généré automatiquement (identifiant aléatoire, non personnalisable) pour éviter
+   qu'un lien lisible ne révèle des informations sur l'objet ou son propriétaire.
 4. Génère un QR code pointant vers cette URL (n'importe quel générateur QR, ex. la
    commande `qrencode` ou un service en ligne) et colle-le sur le sac.
 
@@ -63,6 +65,23 @@ rempli par le finder.
 
 ## Notes de sécurité
 
-- Change impérativement `ADMIN_PASSWORD` et `SESSION_SECRET` dans `.env` avant de déployer.
+- `ADMIN_PASSWORD`, `SESSION_SECRET`, `BASE_URL` et `NTFY_TOPIC` sont **obligatoires** :
+  l'application refuse de démarrer si l'une d'entre elles est absente (pas de valeur par
+  défaut connue publiquement). `SESSION_SECRET` doit faire au moins 32 caractères
+  (`openssl rand -hex 32`).
+- Le cookie de session admin est scopé au path `/admin`, `Secure`, `HttpOnly` et
+  `SameSite=Strict` — l'appli suppose qu'elle tourne derrière un reverse proxy HTTPS
+  (`trust proxy` est activé). En dev local sans HTTPS, la connexion admin ne fonctionnera
+  pas tant que le cookie `secure` ne peut pas être posé.
+- `/admin/login` et les endpoints publics `/o/:slug/scan` et `/o/:slug/submit` sont
+  limités en fréquence (rate limiting) par IP.
+- Les actions admin qui modifient des données (créer/éditer/supprimer un objet, effacer
+  l'historique, se déconnecter) sont protégées par un jeton anti-CSRF.
+- Un bouton "Effacer l'historique" par objet permet de purger les scans et soumissions
+  (dont les positions GPS). La variable optionnelle `RETENTION_DAYS` (voir `.env.example`)
+  active une purge automatique périodique.
 - Les données (SQLite) sont dans `./data`, incluses automatiquement dans le backup global
   `~/docker` si tu utilises le script de backup existant.
+
+Après avoir modifié `package.json`, pense à lancer `npm install` pour installer les
+nouvelles dépendances (`helmet`, `express-rate-limit`) et régénérer `package-lock.json`.
