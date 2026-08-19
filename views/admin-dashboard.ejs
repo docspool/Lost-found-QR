@@ -10,7 +10,10 @@
   <main class="card wide">
     <div class="admin-header">
       <h1>📋 Mes objets</h1>
-      <form method="POST" action="/admin/logout"><button class="link-btn" type="submit">Déconnexion</button></form>
+      <form method="POST" action="/admin/logout">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <button class="link-btn" type="submit">Déconnexion</button>
+      </form>
     </div>
 
     <a class="btn" href="/admin/objects/new">+ Nouvel objet</a>
@@ -38,7 +41,8 @@
               <a href="/admin/objects/<%= o.id %>/edit">Modifier</a>
               ·
               <form method="POST" action="/admin/objects/<%= o.id %>/delete" style="display:inline"
-                    onsubmit="return confirm('Supprimer cet objet et tout son historique ?');">
+                    data-confirm="Supprimer cet objet et tout son historique ?">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                 <button class="link-btn danger" type="submit">Supprimer</button>
               </form>
             </td>
@@ -50,5 +54,6 @@
       </tbody>
     </table>
   </main>
+  <script src="/public/admin.js" defer></script>
 </body>
 </html>

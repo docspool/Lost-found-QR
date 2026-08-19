@@ -37,7 +37,12 @@
         <input type="hidden" name="accuracy" id="accuracy" />
         <button type="submit">Envoyer</button>
       </form>
-      <p class="geo-status" id="geo-status">📍 Localisation en cours...</p>
+      <p class="privacy-note">
+        📍 Si tu l'autorises, ta position approximative est enregistrée et envoyée
+        au propriétaire pour l'aider à te retrouver plus facilement. Tu peux refuser
+        sans que ça t'empêche d'envoyer le formulaire.
+      </p>
+      <p class="geo-status" id="geo-status">Localisation en cours...</p>
     <% } %>
 
     <% if (obj.contact_info) { %>
@@ -48,45 +53,6 @@
     <% } %>
   </main>
 
-  <script>
-    const slug = <%- JSON.stringify(obj.slug) %>;
-    const statusEl = document.getElementById('geo-status');
-    const latField = document.getElementById('latitude');
-    const lngField = document.getElementById('longitude');
-    const accField = document.getElementById('accuracy');
-
-    function reportScan(position) {
-      const body = position
-        ? {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            accuracy: position.coords.accuracy
-          }
-        : {};
-      if (position) {
-        latField && (latField.value = position.coords.latitude);
-        lngField && (lngField.value = position.coords.longitude);
-        accField && (accField.value = position.coords.accuracy);
-        if (statusEl) statusEl.textContent = '📍 Position partagée, merci !';
-      } else if (statusEl) {
-        statusEl.textContent = '';
-      }
-      fetch(`/o/${slug}/scan`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      }).catch(() => {});
-    }
-
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => reportScan(pos),
-        () => reportScan(null),
-        { enableHighAccuracy: true, timeout: 8000 }
-      );
-    } else {
-      reportScan(null);
-    }
-  </script>
+  <script src="/public/object.js" defer></script>
 </body>
 </html>

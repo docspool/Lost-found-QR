@@ -11,27 +11,25 @@
     <h1><%= obj ? '✏️ Modifier l\'objet' : '➕ Nouvel objet' %></h1>
 
     <form method="POST" action="<%= obj ? `/admin/objects/${obj.id}/edit` : '/admin/objects/new' %>">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
       <label>
         Titre (affiché sur la page publique)
-        <input type="text" name="title" value="<%= obj ? obj.title : '' %>" placeholder="Ex : Sac à dos noir" required />
+        <input type="text" name="title" value="<%= obj ? obj.title : '' %>" placeholder="Ex : Sac à dos noir" required maxlength="100" />
       </label>
-
-      <% if (!obj) { %>
-        <label>
-          Identifiant du lien (slug, laisser vide pour auto-génération)
-          <input type="text" name="slug" placeholder="Ex : sac-noir-arnaud" />
-        </label>
-      <% } %>
 
       <label>
         Message affiché au finder
-        <textarea name="message" rows="3" placeholder="Ex : Merci d'avoir trouvé mon sac ! Contacte-moi vite."><%= obj ? obj.message : '' %></textarea>
+        <textarea name="message" rows="3" maxlength="2000" placeholder="Ex : Merci d'avoir trouvé mon sac ! Contacte-moi vite."><%= obj ? obj.message : '' %></textarea>
       </label>
 
       <label>
         Tes coordonnées affichées sur la page (optionnel)
-        <textarea name="contact_info" rows="2" placeholder="Ex : Arnaud - 04xx xx xx xx - email@exemple.be"><%= obj ? obj.contact_info : '' %></textarea>
+        <textarea name="contact_info" rows="2" maxlength="500" placeholder="Ex : Arnaud - 04xx xx xx xx - email@exemple.be"><%= obj ? obj.contact_info : '' %></textarea>
       </label>
+
+      <% if (!obj) { %>
+        <p class="privacy-note">Le lien public sera généré automatiquement (identifiant aléatoire) — il n'est plus possible de choisir un slug personnalisé, pour éviter qu'il ne révèle des informations sur l'objet ou son propriétaire.</p>
+      <% } %>
 
       <% if (obj) { %>
         <label class="checkbox">

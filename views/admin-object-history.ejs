@@ -11,6 +11,12 @@
     <h1>🕓 Historique — <%= obj.title %></h1>
     <p><a href="<%= baseUrl %>/o/<%= obj.slug %>" target="_blank"><%= baseUrl %>/o/<%= obj.slug %></a></p>
 
+    <form method="POST" action="/admin/objects/<%= obj.id %>/clear-history"
+          data-confirm="Effacer tout l'historique (scans + réponses, y compris les positions GPS) de cet objet ? Cette action est irréversible.">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      <button class="link-btn danger" type="submit">🗑️ Effacer l'historique (RGPD / vie privée)</button>
+    </form>
+
     <h2>Réponses du formulaire (<%= submissions.length %>)</h2>
     <table>
       <thead>
@@ -61,5 +67,6 @@
 
     <p><a href="/admin">← Retour à la liste</a></p>
   </main>
+  <script src="/public/admin.js" defer></script>
 </body>
 </html>
