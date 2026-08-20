@@ -82,6 +82,9 @@ rempli par le finder.
   active une purge automatique périodique.
 - Les données (SQLite) sont dans `./data`, incluses automatiquement dans le backup global
   `~/docker` si tu utilises le script de backup existant.
+- Le conteneur tourne en utilisateur non-root (`node`). Comme `./data` est un volume monté
+  depuis l'hôte, `docker-entrypoint.sh` corrige ses permissions (`chown`) à chaque démarrage
+  du conteneur avant de lancer l'appli — inutile de le faire manuellement sur l'hôte.
 
 Après avoir modifié `package.json`, pense à lancer `npm install` pour installer les
 nouvelles dépendances (`helmet`, `express-rate-limit`) et régénérer `package-lock.json`.
